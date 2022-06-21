@@ -1,6 +1,6 @@
 [package]
 name = "smoltcp-nal"
-version = "0.2.1"
+version = "0.1.0"
 authors = ["Ryan Summers <ryan.summers@vertigo-designs.com>"]
 edition = "2018"
 license = "MIT"
@@ -8,11 +8,18 @@ description = "embedded-nal implementation for smoltcp"
 keywords = ["smoltcp", "embedded-nal", "tcp"]
 categories = ["network-programming", "no-std"]
 repository = "https://github.com/quartiq/smoltcp-nal.git"
+resolver = "2"
+
+[features]
+default = [ "smoltcp/defmt" ]
+async = [ ]
 
 [dependencies]
-heapless = "0.7"
+heapless = { version = "0.7.8", features = ["defmt-impl"] }
 embedded-nal = "0.6"
-embedded-time = "0.12"
+critical-section = "0.2.4"
+defmt = ">=0.2.0,<0.4"
+cortex-m-rtic = "1"
 
 [dependencies.nanorand]
 version = "0.6.1"
@@ -20,13 +27,24 @@ default-features = false
 features = ["wyrand"]
 
 [dependencies.smoltcp]
-version = "0.8"
-features = ["medium-ethernet", "proto-ipv6", "socket-tcp", "socket-dhcpv4", "socket-udp"]
+git = "https://github.com/datdenkikniet/smoltcp.git"
+branch = "unique_packet_id"
+features = [
+    "medium-ethernet",
+    "socket-tcp",
+    "socket-dhcpv4",
+    "socket-udp",
+    "socket-dns",
+    "async",
+]
 default-features = false
 
-[dependencies.shared-bus]
-version = "0.2.2"
-optional = true
+[dev-dependencies.smoltcp]
+git = "https://github.com/datdenkikniet/smoltcp.git"
+branch = "unique_packet_id"
+features = [ "alloc", "log" ]
+default-features = false
 
-[features]
-shared-stack = ["shared-bus", "shared-bus/cortex-m"]
+[dev-dependencies.tokio]
+version = "1"
+features = [ "macros", "rt-multi-thread", "time" ]
